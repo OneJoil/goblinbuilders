@@ -1,6 +1,9 @@
 package net.anessan.goblinbuilders;
 
 import com.mojang.logging.LogUtils;
+import net.anessan.goblinbuilders.entity.ModEntities;
+import net.anessan.goblinbuilders.entity.client.GoblinBuilderRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -24,6 +27,8 @@ public class GoblinBuilders
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
+
+        ModEntities.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
@@ -54,7 +59,7 @@ public class GoblinBuilders
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-
+            EntityRenderers.register(ModEntities.GOBLINBUILDER.get(), GoblinBuilderRenderer::new);
         }
     }
 }
