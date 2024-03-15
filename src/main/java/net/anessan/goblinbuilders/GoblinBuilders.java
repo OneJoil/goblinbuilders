@@ -17,10 +17,8 @@ import org.slf4j.Logger;
 @Mod(GoblinBuilders.MOD_ID)
 public class GoblinBuilders
 {
-    // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "goblinbuilders";
-    // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     public GoblinBuilders()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
