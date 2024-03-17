@@ -1,8 +1,16 @@
 package net.anessan.goblinbuilders.entity.custom;
 
+import io.netty.buffer.Unpooled;
+import net.anessan.goblinbuilders.screen.GoblinBuilderMenu;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -15,10 +23,13 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class GoblinBuilderEntity extends PathfinderMob implements InventoryCarrier {
@@ -73,6 +84,35 @@ public class GoblinBuilderEntity extends PathfinderMob implements InventoryCarri
     }
 
     // INVENTORY CARRIER
+
+    // GUI
+    public InteractionResult mobInteract(Player sourceentity, InteractionHand hand) {
+        ItemStack itemstack = sourceentity.getItemInHand(hand);
+        InteractionResult retval = InteractionResult.sidedSuccess(this.level().isClientSide());
+        if (sourceentity instanceof ServerPlayer serverPlayer) {
+            NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
+                @Override
+                public Component getDisplayName() {
+                    return Component.literal("Goblin Builder");
+                }
+                @Override
+                public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+                    FriendlyByteBuf packetBuffer = new FriendlyByteBuf(Unpooled.buffer());
+                    packetBuffer.writeBlockPos(sourceentity.blockPosition());
+                    packetBuffer.writeByte(0);
+                    packetBuffer.writeVarInt(GoblinBuilderEntity.this.getId());
+                    return new GoblinBuilderMenu(id, inventory, packetBuffer);
+                }
+            }, buf -> {
+                buf.writeBlockPos(sourceentity.blockPosition());
+                buf.writeByte(0);
+                buf.writeVarInt(this.getId());
+            });
+        }
+        super.mobInteract(sourceentity, hand);
+        return retval;
+    }
+    // GUI
 
     protected boolean shouldDespawnInPeaceful() {
         return false;
