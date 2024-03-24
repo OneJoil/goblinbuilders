@@ -10,6 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModEntities {
+
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, GoblinBuilders.MOD_ID);
 
@@ -20,4 +21,6 @@ public class ModEntities {
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }
+
+
 }

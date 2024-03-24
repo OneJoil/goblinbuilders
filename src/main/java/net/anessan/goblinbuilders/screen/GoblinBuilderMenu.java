@@ -30,8 +30,9 @@ public class GoblinBuilderMenu extends AbstractContainerMenu implements Supplier
     private Supplier<Boolean> boundItemMatcher = null;
     private Entity boundEntity = null;
     private BlockEntity boundBlockEntity = null;
-    public GoblinBuilderMenu(int pConainerId, Inventory inv, FriendlyByteBuf extraData) {
-        super(ModMenuTypes.GOBLIN_BUILDER_GUI.get(), pConainerId);
+
+    public GoblinBuilderMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+        super(ModMenuTypes.GOBLIN_BUILDER_GUI.get(), id);
         this.entity = inv.player;
         this.world = inv.player.level();
         this.internal = new ItemStackHandler(0);
@@ -46,12 +47,12 @@ public class GoblinBuilderMenu extends AbstractContainerMenu implements Supplier
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
+    public boolean stillValid(Player player) {
         if (this.bound) {
             if (this.boundItemMatcher != null)
                 return this.boundItemMatcher.get();
             else if (this.boundBlockEntity != null)
-                return AbstractContainerMenu.stillValid(this.access, pPlayer, this.boundBlockEntity.getBlockState().getBlock());
+                return AbstractContainerMenu.stillValid(this.access, player, this.boundBlockEntity.getBlockState().getBlock());
             else if (this.boundEntity != null)
                 return this.boundEntity.isAlive();
         }
@@ -59,7 +60,7 @@ public class GoblinBuilderMenu extends AbstractContainerMenu implements Supplier
     }
 
     @Override
-    public ItemStack quickMoveStack(Player playerIn, int pIndex) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         return ItemStack.EMPTY;
     }
 

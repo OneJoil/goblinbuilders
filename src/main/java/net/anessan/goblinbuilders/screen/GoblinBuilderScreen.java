@@ -1,6 +1,7 @@
 package net.anessan.goblinbuilders.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.anessan.goblinbuilders.GoblinBuilders;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -15,10 +16,12 @@ import java.util.HashMap;
 public class GoblinBuilderScreen extends AbstractContainerScreen<GoblinBuilderMenu> {
     private final static HashMap<String, Object> guistate = GoblinBuilderMenu.guistate;
     private static final ResourceLocation texture = new ResourceLocation("goblinbuilders:textures/screens/goblin_builder_gui.png");
+    private static final Component FOLLOWME_BUTTON = Component.translatable("gui.goblinbuildersproject.goblin_builder_gui.button_follow_me");
     private final Level world;
     private final int x, y, z;
     private final Player entity;
-    Button button_follow_me, button_attack;
+    private Button followMeButton;
+
     public GoblinBuilderScreen(GoblinBuilderMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
         this.world = pMenu.world;
@@ -30,7 +33,16 @@ public class GoblinBuilderScreen extends AbstractContainerScreen<GoblinBuilderMe
         this.imageHeight = 166;
     }
 
-    @Override
+    public void init() {
+        super.init();
+        this.followMeButton = addRenderableWidget(
+            Button.builder(
+                FOLLOWME_BUTTON,
+                this::handleFollowMeButton)
+                .bounds(this.leftPos + 8, this.topPos + 11, 65, 20)
+                .build());
+    }
+
     protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.enableBlend();
@@ -39,7 +51,19 @@ public class GoblinBuilderScreen extends AbstractContainerScreen<GoblinBuilderMe
         RenderSystem.disableBlend();
     }
 
-    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    public void containerTick() {
+        super.containerTick();
+    }
+
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    }
+
     public boolean keyPressed(int key, int b, int c) {
         if (key == 256) {
             this.minecraft.player.closeContainer();
@@ -48,30 +72,12 @@ public class GoblinBuilderScreen extends AbstractContainerScreen<GoblinBuilderMe
         return super.keyPressed(key, b, c);
     }
 
-    @Override
-    public void containerTick() {
-        super.containerTick();
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-    }
-
-    @Override
     public void onClose() {
         super.onClose();
     }
 
-    @Override
-    public void init() {
-        super.init();
-        button_follow_me = Button.builder(Component.translatable("gui.goblinbuildersproject.goblin_builder_gui.button_follow_me"), e -> {
-        }).bounds(this.leftPos + 12, this.topPos + 11, 65, 20).build();
-        guistate.put("button:button_follow_me", button_follow_me);
-        this.addRenderableWidget(button_follow_me);
-        button_attack = Button.builder(Component.translatable("gui.goblinbuildersproject.goblin_builder_gui.button_attack"), e -> {
-        }).bounds(this.leftPos + 12, this.topPos + 39, 54, 20).build();
-        guistate.put("button:button_attack", button_attack);
-        this.addRenderableWidget(button_attack);
+    private void handleFollowMeButton(Button button) {
+        GoblinBuilders.PACKET_HANDLER.sendToServer(new GoblinBuilderGuiButtonMessage(0, x, y, z));
+        GoblinBuilderGuiButtonMessage.handleFollowMe(entity, 0, x, y, z);
     }
 }

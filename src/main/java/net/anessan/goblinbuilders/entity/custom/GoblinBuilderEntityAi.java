@@ -5,20 +5,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class GoblinBuilderEntityAi {
-    protected static void pickUpItem(GoblinBuilderEntity pGoblinBuilderEntity, ItemEntity pItemEntity) {
+
+    protected static void pickUpItem(GoblinBuilderEntity pGoblinBuilder, ItemEntity pItemEntity) {
         ItemStack itemstack;
         if (pItemEntity.getItem().is(Items.EMERALD)) {
-            pGoblinBuilderEntity.take(pItemEntity, pItemEntity.getItem().getCount());
+            pGoblinBuilder.take(pItemEntity, pItemEntity.getItem().getCount());
             itemstack = pItemEntity.getItem();
             pItemEntity.discard();
         } else {
-            pGoblinBuilderEntity.take(pItemEntity, 1);
+            pGoblinBuilder.take(pItemEntity, 1);
             itemstack = removeOneItemFromItemEntity(pItemEntity);
         }
     }
 
-    protected static boolean wantsToPickup(GoblinBuilderEntity pGoblinBuilderEntity, ItemStack pStack) {
-        boolean flag = pGoblinBuilderEntity.canAddToInventory(pStack);
+    protected static boolean wantsToPickup(GoblinBuilderEntity pGoblinBuilder, ItemStack pStack) {
+        boolean flag = pGoblinBuilder.canAddToInventory(pStack);
         if (pStack.is(Items.EMERALD)) {
             return flag;
         } else {
@@ -36,5 +37,4 @@ public class GoblinBuilderEntityAi {
         }
         return itemstack1;
     }
-
 }
