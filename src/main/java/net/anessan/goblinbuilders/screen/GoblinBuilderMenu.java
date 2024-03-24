@@ -1,5 +1,6 @@
 package net.anessan.goblinbuilders.screen;
 
+import net.anessan.goblinbuilders.entity.custom.GoblinBuilderEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -20,21 +21,22 @@ import java.util.function.Supplier;
 
 public class GoblinBuilderMenu extends AbstractContainerMenu implements Supplier<Map<Integer, Slot>> {
     public final static HashMap<String, Object> guistate = new HashMap<>();
+    private final GoblinBuilderEntity goblinBuilder;
     public final Level world;
-    public final Player entity;
     public int x, y, z;
-    private ContainerLevelAccess access = ContainerLevelAccess.NULL;
-    private IItemHandler internal;
-    private final Map<Integer, Slot> customSlots = new HashMap<>();
-    private boolean bound = false;
-    private Supplier<Boolean> boundItemMatcher = null;
-    private Entity boundEntity = null;
-    private BlockEntity boundBlockEntity = null;
 
-    public GoblinBuilderMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        super(ModMenuTypes.GOBLIN_BUILDER_GUI.get(), id);
-        this.entity = inv.player;
-        this.world = inv.player.level();
+    private final Map<Integer, Slot> customSlots = new HashMap<>();
+    private IItemHandler internal;
+    private ContainerLevelAccess access = ContainerLevelAccess.NULL;
+    private Supplier<Boolean> boundItemMatcher = null;
+    private BlockEntity boundBlockEntity = null;
+    private Entity boundEntity = null;
+    private boolean bound = false;
+
+    protected GoblinBuilderMenu(int pContainerId, Inventory pPlayerInventory, FriendlyByteBuf extraData, final GoblinBuilderEntity pGoblinBuilder) {
+        super(ModMenuTypes.GOBLIN_BUILDER_GUI.get(), pContainerId);
+        this.goblinBuilder = pGoblinBuilder;
+        this.world = pPlayerInventory.player.level();
         this.internal = new ItemStackHandler(0);
         BlockPos pos = null;
         if (extraData != null) {
@@ -44,6 +46,11 @@ public class GoblinBuilderMenu extends AbstractContainerMenu implements Supplier
             this.z = pos.getZ();
             access = ContainerLevelAccess.create(world, pos);
         }
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player playerIn, int index) {
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -60,10 +67,6 @@ public class GoblinBuilderMenu extends AbstractContainerMenu implements Supplier
     }
 
     @Override
-    public ItemStack quickMoveStack(Player playerIn, int index) {
-        return ItemStack.EMPTY;
-    }
-
     public Map<Integer, Slot> get() {
         return customSlots;
     }
