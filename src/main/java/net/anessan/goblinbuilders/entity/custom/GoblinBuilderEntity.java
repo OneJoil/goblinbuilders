@@ -3,7 +3,6 @@ package net.anessan.goblinbuilders.entity.custom;
 import io.netty.buffer.Unpooled;
 import net.anessan.goblinbuilders.entity.ModEntities;
 import net.anessan.goblinbuilders.screen.GoblinBuilderMenu;
-import net.anessan.goblinbuilders.screen.buttons.FollowMeButton;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -17,7 +16,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -151,15 +149,6 @@ public class GoblinBuilderEntity extends TamableAnimal implements InventoryCarri
         } else {
             return super.mobInteract(pPlayer, pHand);
         }
-
-        double x = this.getX();
-        double y = this.getY();
-        double z = this.getZ();
-        Entity entity = this;
-        Level world = this.level();
-
-        FollowMeButton.execute(entity);
-
         super.mobInteract(pPlayer, pHand);
         return retval;
     }

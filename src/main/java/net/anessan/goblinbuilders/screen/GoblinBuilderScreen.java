@@ -1,7 +1,6 @@
 package net.anessan.goblinbuilders.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.anessan.goblinbuilders.GoblinBuilders;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -77,7 +76,6 @@ public class GoblinBuilderScreen extends AbstractContainerScreen<GoblinBuilderMe
     }
 
     private void handleFollowMeButton(Button button) {
-        GoblinBuilders.PACKET_HANDLER.sendToServer(new GoblinBuilderGuiButtonMessage(0, x, y, z));
-        GoblinBuilderGuiButtonMessage.handleFollowMe(entity, 0, x, y, z);
+
     }
 }
